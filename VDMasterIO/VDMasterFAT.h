@@ -1,5 +1,11 @@
 #pragma once
 
+#ifdef VDMASTERIO_EXPORTS
+#define VDMASTERIO_API __declspec(dllexport)
+#else
+#define VDMASTERIO_API __declspec(dllimport)
+#endif
+
 #include "BasicTypes.h"
 
 byte* oemName[8] = {};
@@ -81,4 +87,33 @@ struct FAT32
 
 typedef FAT32 *LPFAT32;
 
+#define MEGABYTE 1000000
 
+
+VDMASTERIO_API class FATFileSystem {
+private:
+	FAT32 fsStruct;
+	dword clustSize;
+	dword bytesPerSector;
+	qword maxSize;
+	
+	void init();
+	void copy(const FATFileSystem& cpy);
+	void computeFATSize();
+	qword computeSizeParam(dword fatSz, dword rDirEntries, dword clusterCount);
+	void checkFS();
+
+public:
+	FATFileSystem();
+	FATFileSystem(const FATFileSystem& cpy);
+	FATFileSystem(qword fsSize, dword sectorsPerCluster, dword bytesPerSector);
+
+	void setSize(qword size);
+	void setClusterSize(dword sectorsPerCluster);
+	void setBytesPerSector(dword bytesPerSector);
+	
+	dword getSize() const;
+
+	FATFileSystem operator=(const FATFileSystem& cpy);
+
+};
