@@ -7,6 +7,7 @@
 #endif
 
 #include "BasicTypes.h"
+#include "InvalidFATParameter.h"
 
 byte* oemName[8] = {};
 
@@ -87,8 +88,6 @@ struct FAT32
 
 typedef FAT32 *LPFAT32;
 
-#define MEGABYTE 1000000
-
 
 VDMASTERIO_API class FATFileSystem {
 private:
@@ -96,6 +95,8 @@ private:
 	dword clustSize;
 	dword bytesPerSector;
 	qword maxSize;
+	word rEnt;
+	bool isFSNew;
 	
 	void init();
 	void copy(const FATFileSystem& cpy);
@@ -107,6 +108,8 @@ public:
 	FATFileSystem();
 	FATFileSystem(const FATFileSystem& cpy);
 	FATFileSystem(qword fsSize, dword sectorsPerCluster, dword bytesPerSector);
+
+	virtual ~FATFileSystem();
 
 	void setSize(qword size);
 	void setClusterSize(dword sectorsPerCluster);

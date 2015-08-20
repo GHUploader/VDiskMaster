@@ -5,6 +5,11 @@
 
 void FATFileSystem::init() {
 	ZeroMemory(&fsStruct, sizeof(fsStruct));
+	clustSize = 0;
+	bytesPerSector = 0;
+	maxSize = 0;
+	rEnt = 0;
+	isFSNew = true;
 }
 
 void FATFileSystem::copy(const FATFileSystem& cpy) {
@@ -12,6 +17,8 @@ void FATFileSystem::copy(const FATFileSystem& cpy) {
 	bytesPerSector = cpy.bytesPerSector;
 	clustSize = cpy.clustSize;
 	maxSize = cpy.maxSize;
+	rEnt = cpy.rEnt;
+	isFSNew = cpy.isFSNew;
 }
 
 void FATFileSystem::computeFATSize() {
@@ -28,9 +35,12 @@ qword FATFileSystem::computeSizeParam(dword fatSz, dword rDirEntries, dword clus
 	return ret;
 }
 
-void FATFileSystem::checkFS() {
+void FATFileSystem::checkFS() {				// check if the parameters passed will create a valid file system
 	dword mbCount = maxSize / MEGABYTE;
-
+	dword bpSector = clustSize * bytesPerSector;
+	dword maxBpSect = 32 * KILOBYTE;
+	if (bpSector > maxBpSect)
+		throw InvalidFATParameter();
 }
 
 // public
@@ -49,6 +59,10 @@ FATFileSystem::FATFileSystem(qword fsSize, dword bytesPerCluster, dword bytesPer
 	setSize(fsSize);
 	setClusterSize(bytesPerSector);
 	setBytesPerSector(bytesPerSector);
+}
+
+FATFileSystem::~FATFileSystem() {
+
 }
 
 void FATFileSystem::setSize(qword fsSize) {
