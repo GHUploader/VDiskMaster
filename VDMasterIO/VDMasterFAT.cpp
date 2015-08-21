@@ -40,7 +40,7 @@ void FATFileSystem::checkFS() {				// check if the parameters passed will create
 	dword bpSector = clustSize * bytesPerSector;
 	dword maxBpSect = 32 * KILOBYTE;
 	if (bpSector > maxBpSect)
-		throw InvalidFATParameter();
+		throw InvalidFATParameter(ERR_INVALID_BPS);
 }
 
 // public

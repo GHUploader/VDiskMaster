@@ -1,7 +1,7 @@
 #pragma once
 #include "Exception.h"
 
-class InvalidArgument :
+class VDMASTERIO_API InvalidArgument :
 	public Exception
 {
 public:

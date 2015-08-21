@@ -10,7 +10,3 @@
 #define VDMASTERIO_API __declspec(dllimport)
 #endif
 
-#include "BasicTypes.h"
-
-VDMASTERIO_API void setOEMName(byte*);
-

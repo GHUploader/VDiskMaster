@@ -10,6 +10,7 @@ typedef unsigned int dword;
 typedef unsigned long long qword;
 
 typedef unsigned int uint;
+typedef unsigned long long siz;
 
 #ifdef _UNICODE
 typedef wchar_t tchar;

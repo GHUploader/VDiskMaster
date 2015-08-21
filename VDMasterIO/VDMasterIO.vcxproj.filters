@@ -45,6 +45,15 @@
     <ClInclude Include="fatErrCodes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AutoPtr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NoMemoryException.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="errCodes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -63,6 +72,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="InvalidArgument.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NoMemoryException.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

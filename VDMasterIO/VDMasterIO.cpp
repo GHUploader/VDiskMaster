@@ -3,5 +3,3 @@
 
 #include "stdafx.h"
 #include "VDMasterIO.h"
-
-

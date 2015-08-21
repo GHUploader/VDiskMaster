@@ -88,8 +88,9 @@ struct FAT32
 
 typedef FAT32 *LPFAT32;
 
+// this class is responsibe for containing the entire disk image, and being capable of saving it as a file
 
-VDMASTERIO_API class FATFileSystem {
+class VDMASTERIO_API  FATFileSystem {
 private:
 	FAT32 fsStruct;
 	dword clustSize;

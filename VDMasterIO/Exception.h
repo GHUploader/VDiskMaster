@@ -1,6 +1,15 @@
 #pragma once
+
+#ifdef VDMASTERIO_EXPORTS
+#define VDMASTERIO_API __declspec(dllexport)
+#else
+#define VDMASTERIO_API __declspec(dllimport)
+#endif
+
 #include "BasicTypes.h"
-class Exception
+#include "errCodes.h"
+
+class VDMASTERIO_API Exception
 {
 public:
 	Exception();
