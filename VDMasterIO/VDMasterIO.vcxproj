@@ -147,6 +147,7 @@
   <ItemGroup>
     <ClInclude Include="AutoPtr.h" />
     <ClInclude Include="BasicTypes.h" />
+    <ClInclude Include="BCBuffer.h" />
     <ClInclude Include="errCodes.h" />
     <ClInclude Include="Exception.h" />
     <ClInclude Include="fatErrCodes.h" />

@@ -21,15 +21,20 @@ namespace VDMaster
 			this->data = data;
 		}
 
-		static void* operator new[](siz size)
+		Alloc()
+		{
+			data = null;
+		}
+
+		static void* operator new[](siz tLocation)
 		{
 			try
 			{
-				return ::operator new(size);
+				return ::operator new(tLocation);
 			}
 			catch (const std::bad_alloc& e)
 			{
-				throw NoMemoryException(size);
+				throw NoMemoryException(tLocation);
 			}
 			return nullptr;
 		}
@@ -41,17 +46,18 @@ namespace VDMaster
 	private:
 		Alloc<Type>* ptr;
 		Alloc<Type> terminator;
-		siz size;
+		siz tLocation;
 		void(*noMemHandler)(const NoMemoryException& e);
 		bool isDelete;
+		bool isDeletable;
 
 		void init()
 		{
 			ptr = null;
 			terminator = null;
-			size = 0;
+			tLocation = 0;
 			noMemHandler = null;
-			same = null;
+			isDeletable = true;
 			isDelete = true;
 		}
 
@@ -59,8 +65,9 @@ namespace VDMaster
 		{
 			ptr = cpy.ptr;
 			terminator = cpy.terminator;
-			size = cpy.size;
+			tLocation = cpy.tLocation;
 			isDelete = cpy.isDelete;
+			isDeletable = cpy.isDeletable;
 			noMemHandler = cpy.noMemHandler;
 		}
 
@@ -72,21 +79,21 @@ namespace VDMaster
 
 		void clear()
 		{
-			if (isDelete)
+			if (!isDeletable)
 				return;
 			if (ptr)
 				delete[] ptr;
 			ptr = null;
-			isDelete = true;
+			updateDeleteStatus();
 		}
 
-		void alloc(siz size)
+		void alloc(siz tLocation) throw(NoMemoryException)
 		{
-			clear();
-			// later an error check for size will be added
+			reset();
+			// later an error check for tLocation will be added
 			try
 			{
-				ptr = new Alloc<Type>[size + 1];
+				ptr = new Alloc<Type>[tLocation + 2];		// one for user terminator, the other for null terminator
 			}
 			catch (const NoMemoryException& e)
 			{
@@ -94,9 +101,36 @@ namespace VDMaster
 					throw;
 				noMemHandler(e);
 			}
-			this->size = size;
-			ptr[size] = terminator;
-			isDelete = false;
+			updateDeleteStatus();
+			putT();
+		}
+
+		void updateDeleteStatus()
+		{
+			if (ptr)
+				isDelete = true;
+			else
+				isDelete = false;
+		}
+
+		void putT()
+		{
+			if (isDelete)
+				return;
+			ptr[tLocation].data = terminator;
+			ptr[tLocation + 1].data = null;
+		}
+
+		void putNT(Type nT)
+		{
+			terminator = Alloc<Type>(nT);
+			putT();
+		}
+
+		void setNT(Type nT, siz loc)
+		{
+			tLocation = loc;
+			putNT(nT);
 		}
 
 
@@ -108,7 +142,14 @@ namespace VDMaster
 
 		AutoPtr(const AutoPtr<Type>& cpy)
 		{
+			init();
 			copy(cpy);
+		}
+
+		AutoPtr(Type* ptr, siz tLocation, Type terminator)
+		{
+			init();
+			setPtr(ptr, tLocation, terminator);
 		}
 
 		virtual ~AutoPtr()
@@ -116,15 +157,30 @@ namespace VDMaster
 			clear();
 		}
 
-		void setSize(siz size)
+		void allocate(siz tLocation) throw(NoMemoryException)
 		{
+			alloc(tLocation);
+		}
 
+		void setTLocation(siz tLocation)			
+		{
+			this->tLocation = tLocation;
+			putT();
+		}
+
+		void unmountPtr()			// removes ptr without deleting and resets object
+		{
+			init();
 		}
 
 		void setTerminator(Type terminator)
 		{
-			this->terminator = Alloc(terminator);
-			ptr[size] = this->terminator;
+			putNT(terminator);
+		}
+
+		void setDeletable(bool isDeletable)
+		{
+			this->isDeletable = isDeletable;
 		}
 
 		void setNoMemHandler(void(*handler)(const NoMemoryException& e))
@@ -132,14 +188,64 @@ namespace VDMaster
 			noMemHandler = handler;
 		}
 
-		Type& operator[](siz index)
+		void setPtr(Type* ptr, siz tLocation, Type terminator)
 		{
-			if (index < 0 || index > size)
+			clear();												// this will delete the old ptr if isDeletable is set ( it is by default )
+			this->ptr = ptr;
+			updateDeleteStatus();
+			setNT(terminator, tLocation);
+		}
+
+		void setData(Type data, siz location)
+		{
+			this->operator[](location) = data;
+		}
+
+		Type getData(siz location)
+		{
+			return this->operator[](location);
+		}
+
+		Type* getPtr() const
+		{
+			return (Type*)ptr;
+		}
+
+		bool getDeletable() const
+		{
+			return isDeletable;
+		}
+
+		Type getTerminator() const
+		{
+			return terminator;
+		}
+
+		bool isDeleted() const
+		{
+			return isDelete;
+		}
+
+		siz getTLocation() const
+		{
+			return tLocation;
+		}
+
+		void(*getNoMemHandler()(const NoMemoryException&))
+		{
+			return noMemHandler;
+		}
+
+
+
+		Type& operator[](siz index) throw(InvalidArgument)
+		{
+			if (index < 0 || index > tLocation)
 				throw InvalidArgument(ERR_INDEX_OUTOF_RANGE);
 			return ptr[index].data;
 		}
 
-		AutoPtr operator=(const AutoPtr& cpy)
+		AutoPtr& operator=(const AutoPtr& cpy)
 		{
 			copy(cpy);
 			return *this;

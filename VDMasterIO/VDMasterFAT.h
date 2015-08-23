@@ -8,6 +8,7 @@
 
 #include "BasicTypes.h"
 #include "InvalidFATParameter.h"
+#include "AutoPtr.h"
 
 byte* oemName[8] = {};
 
