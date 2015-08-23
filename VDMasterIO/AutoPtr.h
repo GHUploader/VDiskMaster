@@ -231,7 +231,7 @@ namespace VDMaster
 			return tLocation;
 		}
 
-		void(*getNoMemHandler()(const NoMemoryException&))
+		void (*getNoMemHandler())(const NoMemoryException&)
 		{
 			return noMemHandler;
 		}
