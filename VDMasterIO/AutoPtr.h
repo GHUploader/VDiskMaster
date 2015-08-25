@@ -3,7 +3,7 @@
 #include <exception>
 #include "BasicTypes.h"
 #include "NoMemoryException.h"
-#include "InvalidArgument.h"
+#include "IndexOutOfRange.h"
 
 
 
@@ -34,7 +34,7 @@ namespace VDMaster
 			}
 			catch (const std::bad_alloc& e)
 			{
-				throw NoMemoryException(tLocation);
+				throw NoMemoryException(e.what(), tLocation);
 			}
 			return nullptr;
 		}
@@ -238,10 +238,10 @@ namespace VDMaster
 
 
 
-		Type& operator[](siz index) throw(InvalidArgument)
+		Type& operator[](siz index) throw(IndexOutOfRange)
 		{
 			if (index < 0 || index > tLocation)
-				throw InvalidArgument(ERR_INDEX_OUTOF_RANGE);
+				throw IndexOutOfRange(t("AutoPtr<Type>::operator[](siz index);"), index);
 			return ptr[index].data;
 		}
 

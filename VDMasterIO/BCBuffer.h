@@ -19,6 +19,12 @@ namespace VDMaster
 			copy(cpy);
 		}
 
+		BCBuffer(Type* ptr, siz size = 0, Type terminator = null)
+		{
+			init();
+			setBuffer(ptr, size, terminator);
+		}
+
 		virtual ~BCBuffer() 
 		{
 
@@ -29,12 +35,13 @@ namespace VDMaster
 			checkSize(size);
 		}
 
-		void setBuffer(Type* ptr, siz size = 0, Type terminator = getTerminator())
+		void setBuffer(Type* ptr, siz size = 0, Type terminator = getTerminator()) throw (InvalidArgument)
 		{
-			siz pSize;
+			siz pSize = size;
 			if (size == 0)
 				pSize = ptrSiz(ptr, terminator);
 			assert(ptr[pSize] == terminator);
+			checkST(ptr, pSize, terminator);
 			aPtr.setPtr(ptr, pSize, terminator);
 			iPtr.setPtr(ptr, pSize, terminator);
 		}
@@ -87,6 +94,11 @@ namespace VDMaster
 			return ret;
 		}
 
+		Type& operator[](siz index) throw(IndexOutOfRange)
+		{
+			return iPtr[index];
+		}
+
 	private:
 		AutoPtr<Type> aPtr;			// TLocation is aways at the end of the allocated
 		AutoPtr<Type> iPtr;			// points to the same ptr, but TLocation might be closer to the beginning and is the buufer the user sees
@@ -102,6 +114,12 @@ namespace VDMaster
 		{
 			aPtr = cpy.aPtr;
 			iPtr = cpy.iPtr;
+		}
+
+		void checkST(Type* ptr, siz size, Type _ter) throw(InvalidArgument)
+		{
+			if ( size == (siz)-1 || size < 0 || ptr[size] != _ter)
+				throw InvalidArgument(t("size"), ERR_INVALID_BUFFERSIZE);
 		}
 
 		void bigger(siz nSize)
@@ -163,5 +181,8 @@ namespace VDMaster
 		}
 
 	};
+
+	typedef BCBuffer<tchar> CBuffer;
+	typedef BCBuffer<const tchar> CCBuffer;
 
 }

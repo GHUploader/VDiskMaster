@@ -14,8 +14,10 @@ typedef unsigned long long siz;
 
 #ifdef _UNICODE
 typedef wchar_t tchar;
+#define t(c) L ## c
 #else
 typedef char tchar;
+#define t(c) c
 #endif
 
 #define GIGABYTE  1000000000
