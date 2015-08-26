@@ -4,13 +4,14 @@
 #define null 0
 #endif
 
-typedef unsigned char byte;
-typedef unsigned short word;
-typedef unsigned int dword;
-typedef unsigned long long qword;
+typedef unsigned char byte;			// unsigned __int8
+typedef unsigned short word;		// unsigned __int16
+typedef unsigned int dword;			// unsigned __int32
+typedef unsigned long long qword;	// unsigned __int64
 
 typedef unsigned int uint;
 typedef unsigned long long siz;
+typedef int ptrdiff;
 
 #ifdef _UNICODE
 typedef wchar_t tchar;

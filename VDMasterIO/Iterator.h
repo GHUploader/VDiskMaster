@@ -10,6 +10,10 @@ namespace VDMaster
 	class Iterator
 	{
 	public:
+		typedef Type value_type;			// iterator standard typedefs
+		typedef ptrdiff diference_type;
+		typedef Type* pointer;
+		typedef Type& reference;
 		typedef std::random_access_iterator_tag iterator_category;
 
 		Iterator()
@@ -25,9 +29,17 @@ namespace VDMaster
 
 		Iterator(Type* begin, Type* ptr, Type* end)
 		{
+			init();
 			this->begin = begin;
 			this->ptr = ptr;
 			this->end = end;
+			isManaged = true;
+		}
+
+		Iterator(Type* ptr)
+		{
+			init();
+			this->ptr = ptr;
 		}
 
 		virtual ~Iterator()
@@ -62,7 +74,7 @@ namespace VDMaster
 			return begin < ptr;
 		}
 
-		Type& operator[](siz index) throw(IndexOutOfRange)
+		reference operator[](siz index) throw(IndexOutOfRange)
 		{
 			if (&ptr[index] < begin || &ptr[index] > end)
 				throw IndexOutOfRange(t("Iterator<Type>::operator[](siz index)"), index);
@@ -71,6 +83,7 @@ namespace VDMaster
 
 		Iterator& operator=(const Iterator& cpy)
 		{
+			init();
 			copy(cpy);
 			return *this;
 		}
@@ -83,18 +96,104 @@ namespace VDMaster
 			return *this;
 		}
 
-		Type& operator*()
+		Iterator& operator+=(const Iterator& cpy)
+		{
+			Iterator it = (*this).operator+(cpy);
+			copy(it);
+			return *this;
+		}
+
+		Iteratr& operator-=(const Iterator& cpy)
+		{
+			Iterator it = (*this).operator-(cpy);
+			copy(it);
+			return it;
+		}
+
+		reference operator*()
 		{
 			return *ptr;
 		}
 
-		Iterator operator+(const Iterator& cpy)
+		pointer operator->()
+		{
+			return ptr;
+		}
+
+		Iterator operator+(const Iterator& cpy) const
 		{
 			Type* nPtr = ptr + cpy.ptr;
-			if (cpy.isManaged)
-			{
+			Iterator it = addSubIter(cpy, true);
+			it.ptr = nPtr;
+			return it;
+		}
 
-			}
+		Iterator operator-(const Iterator& cpy) const
+		{
+			Type* nPtr = ptr - cpy.ptr;
+			Iterator it = addSubIter(cpy, false);
+			it.ptr = nPtr;
+			return it;
+		}
+
+		Iterator& operator++()
+		{
+			ptr++;
+			checkPtr();
+			return *this;
+		}
+
+		Iterator operator++(int)
+		{
+			Iterator it = *this;
+			ptr++;
+			checkPtr();
+			return it;
+		}
+
+		Iterator& operator--()
+		{
+			ptr--;
+			checkPtr();
+			return *this;
+		}
+
+		Iterator operator--(int)
+		{
+			Iterator it = *this;
+			ptr--;
+			checkPtr();
+			return it;
+		}
+
+		bool operator<(const Iterator& cpy) const
+		{
+			return ptr < cpy.ptr;
+		}
+
+		bool operator<=(const Iterator& cpy) const
+		{
+			return ptr <= cpy.ptr;
+		}
+
+		bool operator>(const Iterator& cpy) const
+		{
+			return ptr > cpy.ptr;
+		}
+
+		bool operator>=(const Iterator& cpy) const
+		{
+			return ptr >= cpy.ptr;
+		}
+
+		bool operator==(const Iterator& cpy) const
+		{
+			return ptr == cpy.ptr;
+		}
+
+		bool operator!=(const Iterator& cpy) const
+		{
+			return !this->operator==(cpy);
 		}
 
 	private:
@@ -103,9 +202,73 @@ namespace VDMaster
 		Type* end;
 		bool isManaged;
 
-		void maxPtr(Type* ptr)
+		void checkPtr()
 		{
+			if (ptr == end || ptr == begin)
+			{
+				Type* tmp = ptr;
+				init();
+				ptr = tmp;
+			}
+		}
 
+		static Type* addSubPtr(Type* ptr, Type* _ptr, bool add)
+		{
+			if (add)
+				return ptr + _ptr;
+			return ptr - _ptr;
+		}
+
+		bool isAddSubItManaged(const Iterator* it, bool add) const
+		{
+			if (it->isManaged && isManaged)
+			{
+				if (ptrIsInRange(addSubPtr(ptr, it->ptr, add))
+					return true;
+			}
+			return false;
+		}
+
+		Iterator addSubIter(const Iterator& cpy, bool add) const
+		{
+			if (isAddSubItManaged(&cpy, add) || cpy.isAddSubItManaged(this, add))
+			{
+				if (isAddItSubManaged(&cpy, add))
+					return Iterator{ begin, begin, end };
+				return Iterator{ cpy.begin, cpy.begin, cpy.end };
+			}
+			return Iterator();
+		}
+
+		bool ptrIsInRange(Type* ptr)
+		{
+			if (ptr >= begin || ptr < end)
+				return true;
+			return false;
+		}
+
+		static Type* maxPtr(Type* ptr, Type* _ptr)
+		{
+			if (ptr <= _ptr)
+				return _ptr;
+			return ptr;
+		}
+
+		Type* maxPtr(Type* ptr)
+		{
+			return maxPtr(this->ptr, ptr);
+		}
+
+		Type* maxEnd(Type* end)
+		{
+			return maxPtr(this->end, end);
+		}
+
+		void minBegin(Type* begin)
+		{
+			if (maxPtr(this->begin, begin) == begin)
+				return this->begin;
+			return begin;
 		}
 
 		void init()
