@@ -122,7 +122,7 @@ namespace VDMaster
 				throw InvalidArgument(t("size"), ERR_INVALID_BUFFERSIZE);
 		}
 
-		void bigger(siz nSize)
+		void bigger(siz nSize)			// sets a new size for the biffer, must be bigger than the previous one
 		{
 			if (aPtr.getSize() <= nSize)
 			{
@@ -134,7 +134,7 @@ namespace VDMaster
 			}
 		}
 
-		void incSize(siz nSize)
+		void incSize(siz nSize)		// increases the size of the buffer to the size given + 10, sets the terminator to the new location, reallocates it once
 		{
 			assert(iPtr.getTLocation() <= aPtr.getTLocation());
 			assert(aPtr.getTLocation() <= nSize);
@@ -152,7 +152,7 @@ namespace VDMaster
 				iPtr.setTLocation(newSize);
 		}
 
-		siz ptrSiz(Type* ptr, Type tEnd)
+		siz ptrSiz(Type* ptr, Type tEnd)		// Searches for tEnd in ptr, assumes tEnd is in ptr, returns the size of ptr
 		{
 			siz index = 0;
 			for (; ptr[index] != tEnd; index++);
