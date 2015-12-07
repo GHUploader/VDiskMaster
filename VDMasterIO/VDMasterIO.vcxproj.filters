@@ -80,13 +80,13 @@
     <ClCompile Include="Exception.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IndexOutOfRange.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="InvalidArgument.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NoMemoryException.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="IndexOutOfRange.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
