@@ -51,9 +51,6 @@
     <ClInclude Include="NoMemoryException.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="errCodes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="BCBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -61,6 +58,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Iterator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="errCodes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
