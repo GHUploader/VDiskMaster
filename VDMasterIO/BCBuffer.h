@@ -144,7 +144,7 @@ namespace VDMaster
 			iPtr.setPtr(nPtr, nSize, iPtr.getTerminator());
 		}
 
-		void checkSize(siz newSize)
+		void checkSize(siz newSize)		// adjusts buffer size
 		{
 			if (newSize > iPtr.getTLocation())
 				bigger(newSize);

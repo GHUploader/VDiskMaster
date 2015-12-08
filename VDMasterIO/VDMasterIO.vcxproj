@@ -160,6 +160,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="VDMasterFAT.h" />
     <ClInclude Include="VDMasterIO.h" />
+    <ClInclude Include="WBCBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
