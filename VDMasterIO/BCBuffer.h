@@ -35,7 +35,7 @@ namespace VDMaster
 			checkSize(size);
 		}
 
-		void setBuffer(Type* ptr, siz size = 0, Type terminator = getTerminator()) throw (InvalidArgument)
+		void setBuffer(Type* ptr, siz size = 0, Type terminator = null) throw (InvalidArgument)
 		{
 			siz pSize = size;
 			if (size == 0)
@@ -54,6 +54,42 @@ namespace VDMaster
 		void setDeletable(bool isDeletable)
 		{
 			aPtr.setDeletable(isDeletable);
+		}
+
+		void push(BCBuffer* buf)
+		{
+			siz bSize = buf->iPtr.getTLocation();
+			siz curSize = iPtr.getTLocation();
+			siz nSize = bSize + curSize;		
+			setSize(nSize);
+			Type* itBegin = &(*buf)[0];
+			Type* itEnd = &(*buf)[bSize];
+			Type* dest = &aPtr[curSize];
+			cpyPtr(itBegin, itEnd, dest);
+		}
+
+		BCBuffer* pop(siz count)
+		{
+			siz curSize = iPtr.getTLocation();
+			siz nSize = curSize - count;
+			Type* itBegin = &aPtr[nSize];
+			Type* ptr = ptrCpy(itBegin, count);
+			BCBuffer* ret = new BCBuffer(ptr, count, getTerminator());
+			setSize(nSize);
+			return ret;
+		}
+
+		void pushFront(BCBuffer* buf)
+		{
+			BCBuffer* tmp = SCopy();
+			siz bSize = buf->iPtr.getTLocation();
+			siz nSize = iPtr.getTLocation() + bSize;
+			setSize(bSize);
+			Type* itBegin = &(*buf)[0];
+			Type* itEnd = &(*buf)[bSize];
+			cpyPtr(itBegin, itEnd, &aPtr[0]);
+			push(tmp);
+			delete tmp;
 		}
 
 		bool isDeletable() const
@@ -124,7 +160,7 @@ namespace VDMaster
 
 		void bigger(siz nSize)			// sets a new size for the biffer, must be bigger than the previous one
 		{
-			if (aPtr.getSize() <= nSize)
+			if (aPtr.getTLocation() <= nSize)
 			{
 				incSize(nSize);
 			}
@@ -139,7 +175,7 @@ namespace VDMaster
 			assert(iPtr.getTLocation() <= aPtr.getTLocation());
 			assert(aPtr.getTLocation() <= nSize);
 			siz aSize = nSize + 10;									// for push/pop operatins, so no reallocation is needed every time
-			Type* nPtr = ptrCpy(aPtr.getPtr(), aPtr.getTLocation());
+			Type* nPtr = ptrCpy(aPtr.getPtr(), aSize);
 			aPtr.setPtr(nPtr, aSize, aPtr.getTerminator());
 			iPtr.setPtr(nPtr, nSize, iPtr.getTerminator());
 		}
@@ -159,28 +195,32 @@ namespace VDMaster
 			return index;
 		}
 
-		void cpyPtr(Type* fPtr, Type* lPtr, Type* dest)
-		{
-			while (fPtr != lPtr)
-			{
-				*dest = *fPtr;
-				fPtr++;
-				dest++;
-			}
-		}
-
-		Type* ptrCpy(Type* ptr, siz size)
-		{
-			AutoPtr<Type> nPtr = AutoPtr<Type>();
-			nPtr.allocate(size);
-			Type* fPtr = ptr;
-			Type* lPtr = &ptr[size];
-			cpyPtr(fPtr, lPtr, nPtr.getPtr());
-			nPtr.setDeletable(false);
-			return nPtr.getPtr();
-		}
+		
 
 	};
+
+	template<typename Type>
+	void cpyPtr(Type* fPtr, Type* lPtr, Type* dest)
+	{
+		while (fPtr != lPtr)
+		{
+			*dest = *fPtr;
+			fPtr++;
+			dest++;
+		}
+	}
+
+	template<typename Type>
+	Type* ptrCpy(Type* ptr, siz size)
+	{
+		AutoPtr<Type> nPtr = AutoPtr<Type>();
+		nPtr.allocate(size);
+		Type* fPtr = ptr;
+		Type* lPtr = &ptr[size];
+		cpyPtr(fPtr, lPtr, nPtr.getPtr());
+		nPtr.setDeletable(false);
+		return nPtr.getPtr();
+	}
 
 	typedef BCBuffer<tchar> CBuffer;
 	typedef BCBuffer<const tchar> CCBuffer;

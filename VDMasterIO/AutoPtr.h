@@ -54,7 +54,7 @@ namespace VDMaster
 		void init()
 		{
 			ptr = null;
-			terminator = null;
+			terminator = (Type)null;
 			tLocation = 0;
 			noMemHandler = null;
 			isDeletable = true;
@@ -108,16 +108,16 @@ namespace VDMaster
 		void updateDeleteStatus()
 		{
 			if (ptr)
-				isDelete = true;
-			else
 				isDelete = false;
+			else
+				isDelete = true;
 		}
 
 		void putT()
 		{
 			if (isDelete)
 				return;
-			ptr[tLocation].data = terminator;
+			ptr[tLocation].data = terminator.data;
 			ptr[tLocation + 1].data = null;
 		}
 
@@ -191,7 +191,7 @@ namespace VDMaster
 		void setPtr(Type* ptr, siz tLocation, Type terminator)
 		{
 			clear();												// this will delete the old ptr if isDeletable is set ( it is by default )
-			this->ptr = ptr;
+			this->ptr = (Alloc<Type>*)ptr;
 			updateDeleteStatus();
 			setNT(terminator, tLocation);
 		}
@@ -218,7 +218,7 @@ namespace VDMaster
 
 		Type getTerminator() const
 		{
-			return terminator;
+			return terminator.data;
 		}
 
 		bool isDeleted() const
