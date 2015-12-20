@@ -13,6 +13,7 @@ namespace VDMaster
 			init();
 		}
 
+
 		BCBuffer(const BCBuffer<Type>& cpy)
 		{
 			init();
@@ -25,7 +26,7 @@ namespace VDMaster
 			setBuffer(ptr, size, terminator);
 		}
 
-		virtual ~BCBuffer() 
+		virtual ~BCBuffer()
 		{
 
 		}
@@ -60,7 +61,7 @@ namespace VDMaster
 		{
 			siz bSize = buf->iPtr.getTLocation();
 			siz curSize = iPtr.getTLocation();
-			siz nSize = bSize + curSize;		
+			siz nSize = bSize + curSize;
 			setSize(nSize);
 			Type* itBegin = &(*buf)[0];
 			Type* itEnd = &(*buf)[bSize];
@@ -73,7 +74,7 @@ namespace VDMaster
 			siz curSize = iPtr.getTLocation();
 			siz nSize = curSize - count;
 			Type* itBegin = &aPtr[nSize];
-			Type* ptr = ptrCpy(itBegin, count);
+			Type* ptr = ptrCpy(itBegin, count + 1);
 			BCBuffer* ret = new BCBuffer(ptr, count, getTerminator());
 			setSize(nSize);
 			return ret;
@@ -90,6 +91,15 @@ namespace VDMaster
 			cpyPtr(itBegin, itEnd, &aPtr[0]);
 			push(tmp);
 			delete tmp;
+		}
+
+		BCBuffer* popFront(siz count)
+		{
+			BCBuffer* ret = SCopy();
+			ret->setSize(count);
+			Type* nPtr = ptrCpy(&aPtr.getPtr()[count], iPtr.getTLocation() - count);
+			setBuffer(nPtr, count - 1, getTerminator());
+			return ret;
 		}
 
 		bool isDeletable() const
@@ -154,7 +164,7 @@ namespace VDMaster
 
 		void checkST(Type* ptr, siz size, Type _ter) throw(InvalidArgument)
 		{
-			if ( size == (siz)-1 || size < 0 || ptr[size] != _ter)
+			if (size == (siz)-1 || size < 0 || ptr[size] != _ter)
 				throw InvalidArgument(t("size"), ERR_INVALID_BUFFERSIZE);
 		}
 
@@ -195,7 +205,7 @@ namespace VDMaster
 			return index;
 		}
 
-		
+
 
 	};
 
