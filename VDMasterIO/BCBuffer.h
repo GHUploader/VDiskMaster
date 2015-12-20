@@ -126,6 +126,11 @@ namespace VDMaster
 			return const_iterator(&(this->operator[](getSize())));
 		}
 
+		iterator getIterator()
+		{
+			return Iterator<Type>(begin(), begin(), end());
+		}
+
 		bool isDeletable()
 		{
 			return aPtr.getDeletable();
