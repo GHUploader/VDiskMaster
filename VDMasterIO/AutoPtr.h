@@ -196,6 +196,7 @@ namespace VDMaster
 			setNT(terminator, tLocation);
 		}
 
+
 		void setData(Type data, siz location)
 		{
 			this->operator[](location) = data;
