@@ -32,6 +32,14 @@ int main()
 	BCBuffer<char>* pfBuf = sCpy->popFront(5);
 	cout << &(*sCpy)[0] << endl;
 	cout << &(*pfBuf)[0] << endl;
+
+	cout << "= operator test:" << endl;
+	BCBuffer<char> cpy;
+	cpy = *pfBuf;
+	BCBuffer<char> ssCpy = (*sCpy);
+	cout << &cpy.begin()[0] << endl;
+	cout << &ssCpy.begin()[0] << endl;
+
 	delete pfBuf;
 	delete sCpy;
 

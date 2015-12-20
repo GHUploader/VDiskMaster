@@ -237,8 +237,6 @@ namespace VDMaster
 			return noMemHandler;
 		}
 
-
-
 		Type& operator[](siz index) throw(IndexOutOfRange)
 		{
 			if (index < 0 || index > tLocation)

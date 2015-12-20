@@ -1,6 +1,7 @@
 #pragma once
 #include <assert.h>
 #include "AutoPtr.h"
+#include "Iterator.h"
 
 namespace VDMaster
 {
@@ -8,6 +9,8 @@ namespace VDMaster
 	class BCBuffer
 	{
 	public:
+		typedef Iterator<Type> iterator;
+		typedef Iterator<const Type> const_iterator;
 		BCBuffer()
 		{
 			init();
@@ -18,6 +21,7 @@ namespace VDMaster
 		{
 			init();
 			copy(cpy);
+			setDeletable(false);
 		}
 
 		BCBuffer(Type* ptr, siz size = 0, Type terminator = null)
@@ -102,7 +106,27 @@ namespace VDMaster
 			return ret;
 		}
 
-		bool isDeletable() const
+		iterator begin()
+		{
+			return iterator(&(this->operator[](0)));
+		}
+
+		const_iterator cbegin()
+		{
+			return const_iterator(&(this->operator[](0)));
+		}
+
+		iterator end()
+		{
+			return iterator(&(this->operator[](getSize())));
+		}
+
+		const_iterator cend()
+		{
+			return const_iterator(&(this->operator[](getSize())));
+		}
+
+		bool isDeletable()
 		{
 			return aPtr.getDeletable();
 		}
@@ -143,6 +167,14 @@ namespace VDMaster
 		Type& operator[](siz index) throw(IndexOutOfRange)
 		{
 			return iPtr[index];
+		}
+
+		BCBuffer<Type>& operator=(const BCBuffer<Type>& cpy)
+		{
+			init();
+			copy(cpy);
+			setDeletable(false);
+			return *this;
 		}
 
 	private:
@@ -198,16 +230,15 @@ namespace VDMaster
 				iPtr.setTLocation(newSize);
 		}
 
-		siz ptrSiz(Type* ptr, Type tEnd)		// Searches for tEnd in ptr, assumes tEnd is in ptr, returns the size of ptr
-		{
-			siz index = 0;
-			for (; ptr[index] != tEnd; index++);
-			return index;
-		}
-
-
-
 	};
+
+	template<typename Type>
+	siz ptrSiz(Type* ptr, Type tEnd)		// Searches for tEnd in ptr, assumes tEnd is in ptr, returns the size of ptr
+	{
+		siz index = 0;
+		for (; ptr[index] != tEnd; index++);
+		return index;
+	}
 
 	template<typename Type>
 	void cpyPtr(Type* fPtr, Type* lPtr, Type* dest)

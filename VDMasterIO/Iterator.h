@@ -76,7 +76,7 @@ namespace VDMaster
 
 		reference operator[](siz index) throw(IndexOutOfRange)
 		{
-			if (&ptr[index] < begin || &ptr[index] > end)
+			if (&ptr[index] < begin || &ptr[index] > end && isManaged)
 				throw IndexOutOfRange(t("Iterator<Type>::operator[](siz index)"), index);
 			return ptr[index];
 		}
@@ -98,14 +98,14 @@ namespace VDMaster
 
 		Iterator& operator+=(const Iterator& cpy)
 		{
-			Iterator it = (*this).operator+(cpy);
+			Iterator it = this->operator+(cpy);
 			copy(it);
 			return *this;
 		}
 
-		Iteratr& operator-=(const Iterator& cpy)
+		Iterator& operator-=(const Iterator& cpy)
 		{
-			Iterator it = (*this).operator-(cpy);
+			Iterator it = this->operator-(cpy);
 			copy(it);
 			return it;
 		}
@@ -223,7 +223,7 @@ namespace VDMaster
 		{
 			if (it->isManaged && isManaged)
 			{
-				if (ptrIsInRange(addSubPtr(ptr, it->ptr, add))
+				if (ptrIsInRange(addSubPtr(ptr, it->ptr, add)))
 					return true;
 			}
 			return false;
