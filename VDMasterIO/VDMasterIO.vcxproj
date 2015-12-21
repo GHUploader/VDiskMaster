@@ -148,13 +148,16 @@
     <ClInclude Include="AutoPtr.h" />
     <ClInclude Include="BasicTypes.h" />
     <ClInclude Include="BCBuffer.h" />
+    <ClInclude Include="Buffer.h" />
     <ClInclude Include="errCodes.h" />
     <ClInclude Include="Exception.h" />
     <ClInclude Include="fatErrCodes.h" />
+    <ClInclude Include="FSComponent.h" />
     <ClInclude Include="IndexOutOfRange.h" />
     <ClInclude Include="InvalidArgument.h" />
     <ClInclude Include="InvalidFATParameter.h" />
     <ClInclude Include="Iterator.h" />
+    <ClInclude Include="VDMath.h" />
     <ClInclude Include="NoMemoryException.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -163,6 +166,7 @@
     <ClInclude Include="WBCBuffer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -178,8 +182,10 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Exception.cpp" />
+    <ClCompile Include="FSComponent.cpp" />
     <ClCompile Include="IndexOutOfRange.cpp" />
     <ClCompile Include="InvalidArgument.cpp" />
+    <ClCompile Include="Math.cpp" />
     <ClCompile Include="NoMemoryException.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

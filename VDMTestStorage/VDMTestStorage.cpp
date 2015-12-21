@@ -43,6 +43,22 @@ int main()
 	delete pfBuf;
 	delete sCpy;
 
+	cout << "Allocation Test:" << endl;
+	BCBuffer<char> allocTest = BCBuffer<char>(ptrCpy<char>("Hi", 2), 2, null);
+	char* largeBuf = new char[5000 + 2];
+	for (int i = 0; i < 5000; i++)
+	{
+		largeBuf[i] = '!';
+	}
+	largeBuf[5000] = null;
+	pushBuf.setBuffer(largeBuf, 5000, null);
+	allocTest.push(&pushBuf);
+	cout << &allocTest.begin()[0] << endl;
+
+	cout << "Deallocation Test:" << endl;
+	allocTest.setSize(2);
+	cout << &allocTest.begin()[0] << endl;
+
 	system("pause");
     return 0;
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include <assert.h>
+#include "VDMath.h"
 #include "AutoPtr.h"
 #include "Iterator.h"
 
@@ -128,7 +129,7 @@ namespace VDMaster
 
 		iterator getIterator()
 		{
-			return Iterator<Type>(begin(), begin(), end());
+			return Iterator<Type>(&this->operator[](0), &this->operator[](0), &this->operator[](getSize()));
 		}
 
 		bool isDeletable()
@@ -151,7 +152,7 @@ namespace VDMaster
 			siz index = 0;
 			while (aPtr[index] != t)
 			{
-				if (index == aPtr.getSize())
+				if (index == iPtr.getTLocation())
 					return (siz)-1;
 				index++;
 			}
@@ -182,21 +183,52 @@ namespace VDMaster
 			return *this;
 		}
 
+	protected:
+		void setExtraAlloc(siz extraAlloc)
+		{
+			//siz curExtraAlloc = this->extraAlloc;
+			this->extraAlloc = extraAlloc;
+			//siz curSize = getSize();
+			//setSize(curSize + curExtraAlloc);
+			//setSize(curSize);
+		}
+
+		void setDecMultiplier(siz multiplier)
+		{
+			decMultiplier = multiplier;
+		}
+
+		siz getExtraAlloc() const
+		{
+			return extraAlloc;
+		}
+
+		siz getDecMultiplier() const
+		{
+			return decMultiplier;
+		}
+
 	private:
 		AutoPtr<Type> aPtr;			// TLocation is aways at the end of the allocated
 		AutoPtr<Type> iPtr;			// points to the same ptr, but TLocation might be closer to the beginning and is the buufer the user sees
+		siz extraAlloc;
+		siz decMultiplier;
 
 		void init()
 		{
 			aPtr = AutoPtr<Type>();
 			iPtr = AutoPtr<Type>();
 			iPtr.setDeletable(false);		// both objects point to the same buffer
+			extraAlloc = 10;
+			decMultiplier = 1;
 		}
 
 		void copy(const BCBuffer& cpy)
 		{
 			aPtr = cpy.aPtr;
 			iPtr = cpy.iPtr;
+			extraAlloc = cpy.extraAlloc;
+			decMultiplier = cpy.decMultiplier;
 		}
 
 		void checkST(Type* ptr, siz size, Type _ter) throw(InvalidArgument)
@@ -209,7 +241,7 @@ namespace VDMaster
 		{
 			if (aPtr.getTLocation() <= nSize)
 			{
-				incSize(nSize);
+				chgSize(nSize);
 			}
 			else
 			{
@@ -217,14 +249,22 @@ namespace VDMaster
 			}
 		}
 
-		void incSize(siz nSize)		// increases the size of the buffer to the size given + 10, sets the terminator to the new location, reallocates it once
+		void chgSize(siz nSize)		// changes the size of the buffer to the size given + 10, sets the terminator to the new location, reallocates it once
 		{
 			assert(iPtr.getTLocation() <= aPtr.getTLocation());
-			assert(aPtr.getTLocation() <= nSize);
-			siz aSize = nSize + 10;									// for push/pop operatins, so no reallocation is needed every time
-			Type* nPtr = ptrCpy(aPtr.getPtr(), aSize);
+			//assert(aPtr.getTLocation() <= nSize);
+			siz aSize = nSize + extraAlloc;									// for push/pop operatins, so no reallocation is needed every time
+			Type* nPtr = ptrCpy(aPtr.getPtr(), iPtr.getTLocation(), aSize);
 			aPtr.setPtr(nPtr, aSize, aPtr.getTerminator());
 			iPtr.setPtr(nPtr, nSize, iPtr.getTerminator());
+		}
+
+		void smaller(siz nSize)
+		{
+			if (iPtr.getTLocation() - nSize > extraAlloc * decMultiplier)
+				chgSize(nSize);
+			else
+				iPtr.setTLocation(nSize);
 		}
 
 		void checkSize(siz newSize)		// adjusts buffer size
@@ -232,7 +272,7 @@ namespace VDMaster
 			if (newSize > iPtr.getTLocation())
 				bigger(newSize);
 			else
-				iPtr.setTLocation(newSize);
+				smaller(newSize);
 		}
 
 	};
@@ -254,6 +294,18 @@ namespace VDMaster
 			fPtr++;
 			dest++;
 		}
+	}
+
+	template<typename Type>
+	Type* ptrCpy(Type* ptr, siz pSize, siz nSize)
+	{
+		AutoPtr<Type> nPtr = AutoPtr<Type>();
+		nPtr.allocate(nSize);
+		Type* fPtr = ptr;
+		Type* lPtr = &ptr[Math::mins(pSize, nSize)];
+		cpyPtr(fPtr, lPtr, nPtr.getPtr());
+		nPtr.setDeletable(false);
+		return nPtr.getPtr();
 	}
 
 	template<typename Type>
