@@ -26,13 +26,16 @@ namespace VDMaster
 		siz objSize;
 		siz objCount;
 		BCBuffer<Buffer*> refCounter;
+		uint refCount;
 
 		void init();
 		void initBuffer();
 		void copy(const Buffer&);
-		void copyParent(const BCBuffer<byte>&);
+		void copyReferances(Buffer*);
 
 		void addRef(Buffer*);
+		void remRef(Buffer*);
+		void updateDeletable();
 	};
 }
 

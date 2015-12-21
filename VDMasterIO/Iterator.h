@@ -91,7 +91,7 @@ namespace VDMaster
 		Iterator& operator=(Type* ptr)
 		{
 			init();
-			this->ptr;
+			this->ptr = ptr;
 			isManaged = false;
 			return *this;
 		}
