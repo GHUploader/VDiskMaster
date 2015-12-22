@@ -168,6 +168,13 @@ namespace VDMaster
 			return ret;
 		}
 
+		static Type* compatPtr(siz size, Type terminator)
+		{
+			Type* ptr = new Type[size + 2];
+			ptr[size] = terminator;
+			return ptr;
+		}
+
 		Type& operator[](siz index) throw(IndexOutOfRange)
 		{
 			return iPtr[index];
@@ -175,6 +182,8 @@ namespace VDMaster
 
 		BCBuffer<Type>& operator=(const BCBuffer<Type>& cpy)
 		{
+			if (this == &cpy)
+				return *this;
 			init();
 			copy(cpy);
 			setDeletable(false);

@@ -63,6 +63,7 @@ namespace VDMaster
 
 		void copy(const AutoPtr<Type>& cpy)
 		{
+			clear();
 			ptr = cpy.ptr;
 			terminator = cpy.terminator;
 			tLocation = cpy.tLocation;

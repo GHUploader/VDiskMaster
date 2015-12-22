@@ -18,6 +18,11 @@ namespace VDMaster
 		bool remRef(void*);
 
 		siz getRefCount() const;
+		iterator getIterator();
+		iterator begin();
+		iterator end();
+
+		RefCounter& operator=(const RefCounter&);
 
 	private:
 		uint refCount;
@@ -28,6 +33,8 @@ namespace VDMaster
 		void init(void*);
 		void copy(const RefCounter&);
 		void copyRefBuffer(const RefCounter&);
+
+		void flush();
 
 	};
 

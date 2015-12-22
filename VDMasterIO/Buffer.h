@@ -7,6 +7,7 @@
 #endif
 
 #include "BCBuffer.h"
+#include "RefCounter.h"
 
 namespace VDMaster
 {
@@ -23,19 +24,15 @@ namespace VDMaster
 		void addObject(void*);
 
 	private:
+		RefCounter refCounter;
 		siz objSize;
 		siz objCount;
-		BCBuffer<Buffer*> refCounter;
-		uint refCount;
 
 		void init();
 		void initBuffer();
 		void copy(const Buffer&);
 		void copyReferances(Buffer*);
 
-		void addRef(Buffer*);
-		void remRef(Buffer*);
-		uint numRefNotNull();
 		void updateDeletable();
 	};
 }
