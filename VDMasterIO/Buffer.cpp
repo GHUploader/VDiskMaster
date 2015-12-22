@@ -23,7 +23,6 @@ namespace VDMaster
 		initBuffer();
 		objSize = 0;
 		objCount = 0;
-		refCount = 0;
 	}
 
 	void Buffer::initBuffer()
@@ -38,21 +37,11 @@ namespace VDMaster
 	{
 		objSize = cpy.objSize;
 		objCount = cpy.objCount;
-		Buffer* ref = (Buffer*)&cpy;
-		addRef(ref);
-		ref->addRef(this);
 	}
 
 	void Buffer::copyReferances(Buffer* cpy)
 	{
-		siz maxIndex = cpy->refCounter.getSize();
-		siz oldSize = refCounter.getSize();
-		siz nSize = refCounter.getSize() + maxIndex;
-		refCounter.setSize(nSize);
-		Iterator<Buffer*> itBegin = cpy->refCounter.begin();
-		Iterator<Buffer*> itEnd = cpy->refCounter.end();
-		Iterator<Buffer*> dest = &refCounter[oldSize];
-		//cpyPtr<Buffer*>(itBegin, itEnd, dest);
+
 	}
 
 	void Buffer::addRef(Buffer* ref)
@@ -62,22 +51,32 @@ namespace VDMaster
 		BCBuffer<Buffer*> pBuf = BCBuffer<Buffer*>(tmp, 1, nullptr);
 		pBuf[0] = ref;
 		refCounter.push(&pBuf);
-		updateDeletable();
 	}
 
-	void Buffer::remRef(Buffer* ref)
+	uint Buffer::numRefNotNull()
 	{
-		siz location = refCounter.find(ref);
-		if (location != (siz)-1)
-			refCounter[location] = nullptr;
+		uint nNull = 0;
+		for (siz i = 0; i < refCounter.getSize(); ++i)
+		{
+			if (refCounter[i] != nullptr)
+				++nNull;
+		}
+		return nNull;
 	}
 
 	void Buffer::updateDeletable()
 	{
-		if (refCounter.getSize() > 1)
-			setDeletable(false);
+		uint nNull = numRefNotNull();
+		if (nNull > 1)
+		{
+			if (isDeletable())
+				setDeletable(false);
+		}
 		else
-			setDeletable(true);
+		{
+			if (!isDeletable())
+				setDeletable(true);
+		}
 	}
 
 }

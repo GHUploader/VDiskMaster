@@ -157,6 +157,7 @@
     <ClInclude Include="InvalidArgument.h" />
     <ClInclude Include="InvalidFATParameter.h" />
     <ClInclude Include="Iterator.h" />
+    <ClInclude Include="RefCounter.h" />
     <ClInclude Include="VDMath.h" />
     <ClInclude Include="NoMemoryException.h" />
     <ClInclude Include="stdafx.h" />
@@ -187,6 +188,7 @@
     <ClCompile Include="InvalidArgument.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="NoMemoryException.cpp" />
+    <ClCompile Include="RefCounter.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

@@ -20,9 +20,7 @@ namespace VDMaster
 
 		BCBuffer(const BCBuffer<Type>& cpy)
 		{
-			init();
-			copy(cpy);
-			setDeletable(false);
+			copyContruct(cpy);
 		}
 
 		BCBuffer(Type* ptr, siz size = 0, Type terminator = null)
@@ -159,7 +157,7 @@ namespace VDMaster
 			return index;
 		}
 
-		BCBuffer* SCopy()			// add iPtr copy
+		BCBuffer* SCopy()		// add iPtr copy
 		{
 			BCBuffer* ret = new BCBuffer();
 			Type* cpyPtr = ptrCpy(aPtr.getPtr(), aPtr.getTLocation());
@@ -208,6 +206,13 @@ namespace VDMaster
 			return decMultiplier;
 		}
 
+		void copyContruct(const BCBuffer& cpy)
+		{
+			init();
+			copy(cpy);
+			setDeletable(false);
+		}
+
 	private:
 		AutoPtr<Type> aPtr;			// TLocation is aways at the end of the allocated
 		AutoPtr<Type> iPtr;			// points to the same ptr, but TLocation might be closer to the beginning and is the buufer the user sees
@@ -220,7 +225,7 @@ namespace VDMaster
 			iPtr = AutoPtr<Type>();
 			iPtr.setDeletable(false);		// both objects point to the same buffer
 			extraAlloc = 10;
-			decMultiplier = 1;
+			decMultiplier = 100;
 		}
 
 		void copy(const BCBuffer& cpy)

@@ -35,6 +35,7 @@ namespace VDMaster
 
 		void addRef(Buffer*);
 		void remRef(Buffer*);
+		uint numRefNotNull();
 		void updateDeletable();
 	};
 }
